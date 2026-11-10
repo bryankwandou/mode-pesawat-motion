@@ -1,0 +1,19 @@
+{
+  "name": "mode-pesawat-motion",
+  "version": "1.0.0",
+  "description": "Interactive Scrollytelling Motion Landing Page for Mode Pesawat by Dandy Barakati ft. Dante Nababan",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "extract": "node extract_frames.js"
+  },
+  "keywords": [
+    "motion",
+    "scrollytelling",
+    "canvas",
+    "webp",
+    "interactive"
+  ],
+  "author": "Antigravity Engineering",
+  "license": "ISC"
+}

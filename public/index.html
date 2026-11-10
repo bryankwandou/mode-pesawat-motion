@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MODE PESAWAT &mdash; Dandy Barakati feat. Dante Nababan | Interactive Motion Experience</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <!-- Loading Screen -->
+  <div id="loader" class="loader-overlay">
+    <div class="loader-content">
+      <div class="loader-brand">MODE PESAWAT</div>
+      <div class="loader-subtitle">DANDY BARAKATI FT. DANTE NABABAN</div>
+      <div class="loader-bar-track">
+        <div id="loader-progress-bar" class="loader-bar-fill"></div>
+      </div>
+      <div class="loader-status">
+        <span id="loader-text">Memuat urutan frame visual...</span>
+        <span id="loader-percentage">0%</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Global Audio Element -->
+  <audio id="soundtrack" src="audio/mode_pesawat.mp3" preload="auto" loop></audio>
+
+  <!-- Sticky Header / Navbar -->
+  <header class="navbar">
+    <div class="nav-left">
+      <a href="#hero" class="brand-logo">
+        <span class="brand-code">MP-01</span>
+        <span class="brand-title">MODE PESAWAT</span>
+      </a>
+    </div>
+
+    <nav class="nav-center">
+      <a href="#section-hero" class="nav-link active" data-target="section-hero">Intro</a>
+      <a href="#section-concept" class="nav-link" data-target="section-concept">Konsep</a>
+      <a href="#section-artists" class="nav-link" data-target="section-artists">Artis</a>
+      <a href="#section-pipeline" class="nav-link" data-target="section-pipeline">Alur Produksi</a>
+      <a href="#section-release" class="nav-link" data-target="section-release">Dengar</a>
+    </nav>
+
+    <div class="nav-right">
+      <!-- Audio Toggle Button -->
+      <button id="audio-toggle-btn" class="nav-button audio-btn" aria-label="Putar Musik Mode Pesawat">
+        <div class="audio-waves" id="audio-visualizer-bars">
+          <span class="wave-bar"></span>
+          <span class="wave-bar"></span>
+          <span class="wave-bar"></span>
+          <span class="wave-bar"></span>
+        </div>
+        <span id="audio-label" class="btn-text">Audio Off</span>
+      </button>
+
+      <!-- Auto Playback Scrubber Toggle -->
+      <button id="autoplay-btn" class="nav-button action-btn">
+        <svg class="btn-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polygon points="5 3 19 12 5 21 5 3"></polygon>
+        </svg>
+        <span id="autoplay-text">Auto Motion</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Top Scroll Progress Indicator -->
+  <div class="scroll-progress-line" id="scroll-progress-indicator"></div>
+
+  <!-- Live Frame HUD (Bottom Corner) -->
+  <div class="frame-hud">
+    <div class="hud-item">
+      <span class="hud-label">FRAME</span>
+      <span class="hud-value" id="hud-frame-count">001 / 168</span>
+    </div>
+    <div class="hud-item">
+      <span class="hud-label">SCROLL</span>
+      <span class="hud-value" id="hud-scroll-pct">0%</span>
+    </div>
+    <div class="hud-item">
+      <span class="hud-label">RENDER</span>
+      <span class="hud-value hud-accent">60 FPS SYNC</span>
+    </div>
+  </div>
+
+  <!-- Scrollytelling Canvas Viewport (Fixed Background) -->
+  <div class="canvas-viewport" id="canvas-container">
+    <canvas id="motion-canvas"></canvas>
+    <div class="canvas-vignette"></div>
+    <div class="canvas-scanline"></div>
+  </div>
+
+  <!-- Scroll Tracks Container (Drives the frame animation) -->
+  <main class="scroll-track" id="scroll-container">
+
+    <!-- Section 1: Hero Introduction -->
+    <section class="story-section" id="section-hero">
+      <div class="section-inner">
+        <div class="hero-badge">
+          <span class="badge-dot"></span>
+          OFFICIAL MUSIC VIDEO MOTION EXPERIENCE
+        </div>
+        <h1 class="hero-title">MODE<br><span class="gradient-text">PESAWAT</span></h1>
+        <p class="hero-subtitle">
+          DANDY BARAKATI <span class="text-dim">FEATURING</span> DANTE NABABAN
+        </p>
+        <p class="hero-description">
+          Sebuah eksplorasi visual interaktif yang diadaptasi dari karya video musik resmi.
+          Jelajahi alur cerita dan estetika sinematik dengan menggulir layar.
+        </p>
+        <div class="scroll-cue">
+          <div class="scroll-mouse">
+            <div class="scroll-wheel"></div>
+          </div>
+          <span class="scroll-cue-text">Gulir ke bawah untuk memulai perjalanan</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 2: Narrative & Philosophy -->
+    <section class="story-section" id="section-concept">
+      <div class="section-inner align-left">
+        <div class="content-card glass-panel">
+          <div class="card-tag">FILOSOFI KARYA</div>
+          <h2 class="card-title">Matikan Gangguan,<br>Nyalakan Fokus</h2>
+          <p class="card-body">
+            "Mode Pesawat" bukan sekadar fitur perangkat genggam, melainkan metafora
+            tentang keputusan sadar untuk memutuskan sambungan dari hiruk-pikuk ekspektasi luar
+            demi menemukan ketenangan batin, ritme orisinal, dan kejernihan visi artistik.
+          </p>
+          <div class="metric-grid">
+            <div class="metric-box">
+              <span class="metric-number">01</span>
+              <span class="metric-desc">Detoks Notifikasi</span>
+            </div>
+            <div class="metric-box">
+              <span class="metric-number">100%</span>
+              <span class="metric-desc">Hadir di Momen</span>
+            </div>
+            <div class="metric-box">
+              <span class="metric-number">24/7</span>
+              <span class="metric-desc">Ruang Kreativitas</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 3: The Artists -->
+    <section class="story-section" id="section-artists">
+      <div class="section-inner align-right">
+        <div class="content-card glass-panel">
+          <div class="card-tag">KOLABORASI MUSIK</div>
+          <h2 class="card-title">Dua Spektrum,<br>Satu Frekuensi</h2>
+          <div class="artist-duo">
+            <div class="artist-profile">
+              <div class="artist-header">
+                <span class="artist-role">VOKAL & KOMPOSISI</span>
+                <span class="artist-name">Dandy Barakati</span>
+              </div>
+              <p class="artist-detail">
+                Membawakan melodi reflektif dengan karakter vokal yang hangat,
+                menganyam lirik intim mengenai perjalanan diri di tengah riuhnya perkotaan.
+              </p>
+            </div>
+            <div class="artist-divider"></div>
+            <div class="artist-profile">
+              <div class="artist-header">
+                <span class="artist-role">KOLABORATOR RAP</span>
+                <span class="artist-name">Dante Nababan</span>
+              </div>
+              <p class="artist-detail">
+                Memberikan ketukan rima berkarakter tegas, ritme dinamis, dan kedalaman
+                perspektif melalui baris lirik yang lugas dan bertenaga.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 4: Production Pipeline -->
+    <section class="story-section" id="section-pipeline">
+      <div class="section-inner align-center">
+        <div class="content-card glass-panel wide-card">
+          <div class="card-tag">ARSITEKTUR TEKNOLOGI</div>
+          <h2 class="card-title">Alur Pembuatan Visual Motion</h2>
+          <p class="card-lead">
+            Implementasi teknik modern scrollytelling yang membedah berkas video menjadi
+            urutan gambar WebP terkompresi dengan fidelitas tinggi untuk rendering web instan.
+          </p>
+          <div class="pipeline-stepper">
+            <div class="step-card">
+              <div class="step-index">01</div>
+              <div class="step-title">Generasi Sumber</div>
+              <p class="step-desc">Karakter visual dan footage sinematik diproses dengan arahan terarah.</p>
+            </div>
+            <div class="step-card">
+              <div class="step-index">02</div>
+              <div class="step-title">Dekomposisi Video</div>
+              <p class="step-desc">Video diekstraksi menggunakan FFmpeg ke dalam ratusan bingkai gambar WebP optimal.</p>
+            </div>
+            <div class="step-card">
+              <div class="step-index">03</div>
+              <div class="step-title">Interpolasi Kanvas</div>
+              <p class="step-desc">Scrubbing kanvas 2D berbasis akselerasi GPU dengan teknik linear interpolation (lerp).</p>
+            </div>
+            <div class="step-card">
+              <div class="step-index">04</div>
+              <div class="step-title">Sinkronisasi Audio</div>
+              <p class="step-desc">Pengalaman terintegrasi antara gerak visual dan aransemen instrumen audio.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 5: Streaming & Call to Action -->
+    <section class="story-section" id="section-release">
+      <div class="section-inner align-center">
+        <div class="content-card glass-panel cta-card">
+          <div class="card-tag">DISTRIBUSI DIGITAL</div>
+          <h2 class="card-title">Dengarkan "Mode Pesawat" Sekarang</h2>
+          <p class="card-body">
+            Karya resmi Dandy Barakati bersama Dante Nababan dapat diakses di seluruh platform pemutar musik digital.
+          </p>
+          <div class="platform-actions">
+            <a href="https://www.youtube.com" target="_blank" rel="noopener noreferrer" class="platform-btn youtube-btn">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+              </svg>
+              <span>YouTube Video</span>
+            </a>
+            <a href="https://open.spotify.com" target="_blank" rel="noopener noreferrer" class="platform-btn spotify-btn">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.498 17.306c-.216.353-.674.464-1.027.248-2.812-1.718-6.351-2.107-10.52-1.155-.403.092-.803-.16-.895-.562-.092-.404.16-.804.562-.896 4.564-1.042 8.484-.598 11.632 1.338.353.216.465.674.248 1.027zm1.468-3.262c-.272.441-.853.582-1.294.31-3.218-1.977-8.124-2.55-11.93-1.394-.497.151-1.026-.134-1.177-.63-.151-.497.134-1.026.63-1.177 4.348-1.319 9.757-.674 13.46 1.597.441.272.583.853.311 1.294zm.126-3.398c-3.858-2.29-10.222-2.502-13.896-1.387-.59.18-1.218-.16-1.397-.75-.18-.59.16-1.218.75-1.398 4.232-1.285 11.26-1.037 15.698 1.597.531.315.703 1.004.388 1.535-.314.532-1.003.704-1.543.389z"/>
+              </svg>
+              <span>Spotify</span>
+            </a>
+            <a href="https://music.apple.com" target="_blank" rel="noopener noreferrer" class="platform-btn apple-btn">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M15.97 6.42c.6-0.73 1.01-1.75.9-2.77-.87.04-1.92.58-2.54 1.31-.55.63-1.03 1.66-.9 2.66 1.02.08 2.02-.48 2.54-1.2z"/>
+              </svg>
+              <span>Apple Music</span>
+            </a>
+          </div>
+
+          <div class="footer-meta">
+            <p class="credits-text">
+              Lagu: <strong>Mode Pesawat</strong> | Vokal: <strong>Dandy Barakati ft. Dante Nababan</strong><br>
+              Pengembangan Sistem Interaktif Motion Web &bull; Antigravity Engine
+            </p>
+            <button id="scroll-to-top-btn" class="nav-button action-btn">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="12" y1="19" x2="12" y2="5"></line>
+                <polyline points="5 12 12 5 19 12"></polyline>
+              </svg>
+              <span>Kembali ke Atas</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
