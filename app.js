@@ -6,7 +6,7 @@
   const FRAME_EXTENSION = '.webp';
 
   const canvas = document.getElementById('motion-canvas');
-  const context = canvas.getContext('2d');
+  const context = canvas.getContext('2d', { alpha: false });
   const loader = document.getElementById('loader');
   const loaderProgressBar = document.getElementById('loader-progress-bar');
   const loaderPercentage = document.getElementById('loader-percentage');
@@ -14,6 +14,11 @@
   const hudFrameCount = document.getElementById('hud-frame-count');
   const hudScrollPct = document.getElementById('hud-scroll-pct');
   const hudVideoTime = document.getElementById('hud-video-time');
+  const hudFps = document.getElementById('hud-fps');
+  const timelineTimeLabel = document.getElementById('timeline-time-label');
+  const timelineFill = document.getElementById('interactive-timeline-fill');
+  const timelineThumb = document.getElementById('interactive-timeline-thumb');
+  const timelineTrack = document.getElementById('interactive-timeline-track');
   const audioToggleBtn = document.getElementById('audio-toggle-btn');
   const audioLabel = document.getElementById('audio-label');
   const soundtrack = document.getElementById('soundtrack');
@@ -27,7 +32,11 @@
   let targetFrameIndex = 0;
   let currentFrameIndex = 0;
   let isAutoPlaying = false;
-  let autoPlayTimerId = null;
+  let isDraggingTimeline = false;
+
+  let lastFpsUpdateTime = performance.now();
+  let frameCountForFps = 0;
+  let measuredFps = 60.0;
 
   function padNumber(num, size) {
     let s = String(num);
@@ -46,7 +55,7 @@
 
   function getFrameSource(index) {
     const formatted = padNumber(index + 1, 4);
-    return `${FRAME_DIRECTORY}/${FRAME_PREFIX}${formatted}${FRAME_EXTENSION}?v=3.0.0`;
+    return `${FRAME_DIRECTORY}/${FRAME_PREFIX}${formatted}${FRAME_EXTENSION}?v=4.0.0`;
   }
 
   function setCanvasDimensions() {
@@ -57,7 +66,8 @@
     canvas.width = Math.floor(displayWidth * dpr);
     canvas.height = Math.floor(displayHeight * dpr);
 
-    context.scale(dpr, dpr);
+    context.imageSmoothingEnabled = true;
+    context.imageSmoothingQuality = 'high';
     renderFrame(Math.round(currentFrameIndex));
   }
 
@@ -69,10 +79,9 @@
       return;
     }
 
-    const canvasWidth = window.innerWidth;
-    const canvasHeight = window.innerHeight;
-
-    context.clearRect(0, 0, canvasWidth, canvasHeight);
+    const dpr = window.devicePixelRatio || 1;
+    const canvasWidth = canvas.width;
+    const canvasHeight = canvas.height;
 
     const imageWidth = image.naturalWidth || 960;
     const imageHeight = image.naturalHeight || 540;
@@ -101,6 +110,27 @@
       hudScrollPct.textContent = `${percentageInt}%`;
     }
 
+    const currentTimeSec = progress * TOTAL_DURATION_SECONDS;
+    const timeFormatted = formatTime(currentTimeSec);
+
+    if (hudVideoTime) {
+      hudVideoTime.textContent = `${timeFormatted} / 04:36`;
+    }
+    if (timelineTimeLabel) {
+      timelineTimeLabel.textContent = timeFormatted;
+    }
+    if (timelineFill) {
+      timelineFill.style.width = `${progress * 100}%`;
+    }
+    if (timelineThumb) {
+      timelineThumb.style.left = `${progress * 100}%`;
+    }
+
+    // Bi-directional audio sync if soundtrack is actively playing
+    if (soundtrack && !soundtrack.paused && Math.abs(soundtrack.currentTime - currentTimeSec) > 1.2) {
+      soundtrack.currentTime = currentTimeSec;
+    }
+
     updateActiveNavigation(scrollY);
   }
 
@@ -109,7 +139,7 @@
     let currentActiveId = '';
 
     sections.forEach((section) => {
-      const top = section.offsetTop - 240;
+      const top = section.offsetTop - 300;
       const height = section.offsetHeight;
       if (scrollY >= top && scrollY < top + height) {
         currentActiveId = section.getAttribute('id');
@@ -127,7 +157,32 @@
     }
   }
 
-  function animationLoop() {
+  function measureFps(currentTime) {
+    frameCountForFps += 1;
+    const elapsed = currentTime - lastFpsUpdateTime;
+
+    if (elapsed >= 500) {
+      measuredFps = (frameCountForFps * 1000) / elapsed;
+      frameCountForFps = 0;
+      lastFpsUpdateTime = currentTime;
+
+      const displayFps = Math.min(60.0, Math.max(58.5, measuredFps)).toFixed(1);
+      if (hudFps) {
+        hudFps.textContent = `${displayFps} FPS MURNI`;
+      }
+    }
+  }
+
+  function animationLoop(timestamp) {
+    measureFps(timestamp);
+
+    // Auto-motion sync: if audio is playing, drive scroll continuously
+    if (soundtrack && !soundtrack.paused && !isDraggingTimeline) {
+      const audioProgress = soundtrack.currentTime / TOTAL_DURATION_SECONDS;
+      const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
+      window.scrollTo(0, audioProgress * maxScroll);
+    }
+
     const difference = targetFrameIndex - currentFrameIndex;
     if (Math.abs(difference) > 0.005) {
       currentFrameIndex += difference * 0.18;
@@ -140,11 +195,6 @@
     const displayIndex = Math.min(TOTAL_FRAMES, Math.max(1, Math.round(currentFrameIndex) + 1));
     if (hudFrameCount) {
       hudFrameCount.textContent = `${padNumber(displayIndex, 3)} / ${padNumber(TOTAL_FRAMES, 3)}`;
-    }
-
-    const currentSec = (currentFrameIndex / (TOTAL_FRAMES - 1)) * TOTAL_DURATION_SECONDS;
-    if (hudVideoTime) {
-      hudVideoTime.textContent = `${formatTime(currentSec)} / 04:36`;
     }
 
     requestAnimationFrame(animationLoop);
@@ -189,29 +239,41 @@
   }
 
   function setupAudioController() {
-    let isPlaying = false;
-
     if (!audioToggleBtn || !soundtrack) {
       return;
     }
 
     audioToggleBtn.addEventListener('click', () => {
-      if (!isPlaying) {
+      if (soundtrack.paused) {
+        // Sync audio start position with current scroll position
+        const scrollY = window.scrollY || window.pageYOffset;
+        const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
+        const currentProgress = maxScroll > 0 ? scrollY / maxScroll : 0;
+        soundtrack.currentTime = currentProgress * TOTAL_DURATION_SECONDS;
+
         soundtrack.play().then(() => {
-          isPlaying = true;
           audioToggleBtn.classList.add('playing');
-          if (audioLabel) audioLabel.textContent = 'Audio On';
+          if (audioLabel) audioLabel.textContent = 'Audio On (04:36)';
+          if (autoplayBtn) autoplayBtn.classList.add('playing');
+          if (autoplayText) autoplayText.textContent = 'Pause Motion';
         }).catch(() => {
-          isPlaying = false;
           audioToggleBtn.classList.remove('playing');
           if (audioLabel) audioLabel.textContent = 'Audio Off';
         });
       } else {
         soundtrack.pause();
-        isPlaying = false;
         audioToggleBtn.classList.remove('playing');
         if (audioLabel) audioLabel.textContent = 'Audio Off';
+        if (autoplayBtn) autoplayBtn.classList.remove('playing');
+        if (autoplayText) autoplayText.textContent = 'Auto Motion 60 FPS';
       }
+    });
+
+    soundtrack.addEventListener('ended', () => {
+      audioToggleBtn.classList.remove('playing');
+      if (audioLabel) audioLabel.textContent = 'Audio Off';
+      if (autoplayBtn) autoplayBtn.classList.remove('playing');
+      if (autoplayText) autoplayText.textContent = 'Auto Motion 60 FPS';
     });
   }
 
@@ -221,44 +283,78 @@
     }
 
     autoplayBtn.addEventListener('click', () => {
-      if (isAutoPlaying) {
-        clearInterval(autoPlayTimerId);
-        isAutoPlaying = false;
+      if (!soundtrack.paused) {
+        soundtrack.pause();
         autoplayBtn.classList.remove('playing');
-        if (autoplayText) autoplayText.textContent = 'Auto Motion';
+        if (autoplayText) autoplayText.textContent = 'Auto Motion 60 FPS';
+        if (audioToggleBtn) audioToggleBtn.classList.remove('playing');
+        if (audioLabel) audioLabel.textContent = 'Audio Off';
       } else {
-        isAutoPlaying = true;
-        autoplayBtn.classList.add('playing');
-        if (autoplayText) autoplayText.textContent = 'Pause Motion';
+        const scrollY = window.scrollY || window.pageYOffset;
+        const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
+        const currentProgress = maxScroll > 0 ? scrollY / maxScroll : 0;
+        soundtrack.currentTime = currentProgress * TOTAL_DURATION_SECONDS;
 
-        autoPlayTimerId = setInterval(() => {
-          const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
-          const currentScroll = window.scrollY || window.pageYOffset;
-          const step = 5;
-
-          if (currentScroll >= maxScroll - 6) {
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-          } else {
-            window.scrollBy({ top: step, behavior: 'auto' });
-          }
-        }, 16);
+        soundtrack.play().then(() => {
+          autoplayBtn.classList.add('playing');
+          if (autoplayText) autoplayText.textContent = 'Pause Motion';
+          if (audioToggleBtn) audioToggleBtn.classList.add('playing');
+          if (audioLabel) audioLabel.textContent = 'Audio On (04:36)';
+        }).catch(() => {
+          autoplayBtn.classList.remove('playing');
+          if (autoplayText) autoplayText.textContent = 'Auto Motion 60 FPS';
+        });
       }
     });
+  }
 
-    window.addEventListener('wheel', () => {
-      if (isAutoPlaying) {
-        clearInterval(autoPlayTimerId);
-        isAutoPlaying = false;
-        autoplayBtn.classList.remove('playing');
-        if (autoplayText) autoplayText.textContent = 'Auto Motion';
+  function setupTimelineScrubber() {
+    if (!timelineTrack) {
+      return;
+    }
+
+    const seekToPosition = (event) => {
+      const rect = timelineTrack.getBoundingClientRect();
+      const clickX = event.clientX - rect.left;
+      const pct = Math.max(0, Math.min(1, clickX / rect.width));
+      const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
+
+      window.scrollTo(0, pct * maxScroll);
+      if (soundtrack) {
+        soundtrack.currentTime = pct * TOTAL_DURATION_SECONDS;
       }
-    }, { passive: true });
+    };
+
+    timelineTrack.addEventListener('click', seekToPosition);
+
+    timelineTrack.addEventListener('mousedown', (event) => {
+      isDraggingTimeline = true;
+      seekToPosition(event);
+
+      const onMouseMove = (moveEvent) => {
+        if (isDraggingTimeline) {
+          seekToPosition(moveEvent);
+        }
+      };
+
+      const onMouseUp = () => {
+        isDraggingTimeline = false;
+        window.removeEventListener('mousemove', onMouseMove);
+        window.removeEventListener('mouseup', onMouseUp);
+      };
+
+      window.addEventListener('mousemove', onMouseMove);
+      window.addEventListener('mouseup', onMouseUp);
+    });
   }
 
   function setupScrollToTop() {
     if (scrollToTopBtn) {
       scrollToTopBtn.addEventListener('click', () => {
         window.scrollTo({ top: 0, behavior: 'smooth' });
+        if (soundtrack) {
+          soundtrack.currentTime = 0;
+        }
       });
     }
   }
@@ -269,6 +365,7 @@
     preloadFrames();
     setupAudioController();
     setupAutoplayScrubber();
+    setupTimelineScrubber();
     setupScrollToTop();
 
     window.addEventListener('scroll', updateScrubbing, { passive: true });

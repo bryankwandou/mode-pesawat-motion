@@ -15,6 +15,7 @@ const MIME_TYPES = {
   '.jpg': 'image/jpeg',
   '.svg': 'image/svg+xml',
   '.mp3': 'audio/mpeg',
+  '.mp4': 'video/mp4',
   '.ico': 'image/x-icon'
 };
 
@@ -39,7 +40,7 @@ const server = http.createServer((req, res) => {
     const ext = path.extname(filePath).toLowerCase();
     const contentType = MIME_TYPES[ext] || 'application/octet-stream';
 
-    if (ext === '.mp3' && req.headers.range) {
+    if ((ext === '.mp3' || ext === '.mp4') && req.headers.range) {
       const range = req.headers.range;
       const totalSize = stats.size;
       const parts = range.replace(/bytes=/, '').split('-');
