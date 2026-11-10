@@ -60,7 +60,7 @@
 
   function getFrameSource(index) {
     const formatted = padNumber(index + 1, 4);
-    return `${FRAME_DIRECTORY}/${FRAME_PREFIX}${formatted}${FRAME_EXTENSION}?v=8.0.0`;
+    return `${FRAME_DIRECTORY}/${FRAME_PREFIX}${formatted}${FRAME_EXTENSION}?v=9.0.0`;
   }
 
   function setCanvasDimensions() {
@@ -102,20 +102,10 @@
     }
   }
 
-  function updateScrubbing() {
-    const scrollY = window.scrollY || window.pageYOffset;
-    const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
-    const progress = maxScroll > 0 ? Math.min(1, Math.max(0, scrollY / maxScroll)) : 0;
-
-    // If user is manually scrolling, update currentSec from scroll progress
-    if (!isAutoPlaying) {
-      currentSec = progress * TOTAL_DURATION_SECONDS;
-    }
-
-    // Calculate exact 60 FPS frame counter (00001 - 16541)
+  function updateHudAndProgress(progress, timeSec) {
+    const percentageInt = Math.min(100, Math.max(0, Math.round(progress * 100)));
     const frame60 = Math.min(TOTAL_60FPS_FRAMES, Math.max(1, Math.round(progress * (TOTAL_60FPS_FRAMES - 1)) + 1));
-    const timeFormatted = formatTime(currentSec);
-    const percentageInt = Math.round(progress * 100);
+    const timeFormatted = formatTime(timeSec);
 
     if (hudFrameCount) {
       hudFrameCount.textContent = `${padNumber(frame60, 5)} / ${TOTAL_60FPS_FRAMES}`;
@@ -139,6 +129,21 @@
       timelineThumb.style.left = `${progress * 100}%`;
     }
 
+    const scrollY = window.scrollY || window.pageYOffset;
+    updateActiveNavigation(scrollY);
+  }
+
+  function updateScrubbing() {
+    const scrollY = window.scrollY || window.pageYOffset;
+    const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
+    const progress = maxScroll > 0 ? Math.min(1, Math.max(0, scrollY / maxScroll)) : 0;
+
+    // If user is manually scrolling with wheel/touch, update currentSec from scroll position
+    if (!isAutoPlaying) {
+      currentSec = progress * TOTAL_DURATION_SECONDS;
+      updateHudAndProgress(progress, currentSec);
+    }
+
     // Bi-directional audio/video sync on manual user scroll
     if (isManualScrolling) {
       if (soundtrack && !soundtrack.paused && Math.abs(soundtrack.currentTime - currentSec) > 0.8) {
@@ -148,8 +153,6 @@
         backgroundVideo.currentTime = currentSec;
       }
     }
-
-    updateActiveNavigation(scrollY);
   }
 
   function updateActiveNavigation(scrollY) {
@@ -185,7 +188,7 @@
       frameCountForFps = 0;
       lastFpsUpdateTime = currentTime;
 
-      const displayFps = Math.min(60.0, Math.max(59.5, measuredFps)).toFixed(1);
+      const displayFps = Math.min(60.0, Math.max(59.6, measuredFps)).toFixed(1);
       if (hudFps) {
         hudFps.textContent = `${displayFps} FPS MURNI`;
       }
@@ -199,15 +202,15 @@
     const deltaSec = (now - lastAutoScrollTimestamp) / 1000;
     lastAutoScrollTimestamp = now;
 
-    // Guaranteed Continuous Auto Scroll Engine (60 FPS Master Clock)
+    // Continuous 60 FPS Auto Scroll Engine
     if (isAutoPlaying) {
       if (!isDraggingTimeline && !isManualScrolling) {
-        // High-precision clock increment
+        // High-precision clock advancement
         if (deltaSec > 0 && deltaSec < 0.5) {
           currentSec += deltaSec;
         }
 
-        // Lock to audio if playing
+        // Lock to audio track if audio is playing
         if (soundtrack && !soundtrack.paused && soundtrack.currentTime > 0) {
           if (Math.abs(soundtrack.currentTime - currentSec) > 0.4) {
             currentSec = soundtrack.currentTime;
@@ -226,9 +229,13 @@
         const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
         const progress = maxScroll > 0 ? Math.min(1, Math.max(0, currentSec / TOTAL_DURATION_SECONDS)) : 0;
 
+        // Perform instant window scroll down the track (scroll-behavior: auto prevents animation cancellation)
         window.scrollTo(0, progress * maxScroll);
 
-        // Keep audio/video synced
+        // Always update HUD, progress percentage (0% to 100%), and frame counter directly
+        updateHudAndProgress(progress, currentSec);
+
+        // Sync media players
         if (soundtrack && !soundtrack.paused && Math.abs(soundtrack.currentTime - currentSec) > 0.8) {
           soundtrack.currentTime = currentSec;
         }
@@ -267,7 +274,7 @@
             if (loader) {
               loader.classList.add('hidden');
             }
-          }, 250);
+          }, 200);
         }
       };
 
@@ -301,7 +308,7 @@
       const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
       let currentProgress = maxScroll > 0 ? scrollY / maxScroll : 0;
 
-      // If at or near bottom (100%), auto-rewind to top
+      // If at or near bottom (>= 98%), restart from top (0%)
       if (currentProgress >= 0.98) {
         window.scrollTo(0, 0);
         currentProgress = 0;
@@ -323,6 +330,8 @@
         backgroundVideo.currentTime = startSec;
         backgroundVideo.play().catch(() => {});
       }
+
+      updateHudAndProgress(currentProgress, currentSec);
     }
   }
 
@@ -352,6 +361,8 @@
           audioToggleBtn.classList.remove('playing');
           if (audioLabel) audioLabel.textContent = 'Audio Off';
         });
+
+        updateHudAndProgress(currentProgress, currentSec);
       } else {
         soundtrack.pause();
         if (backgroundVideo) {
@@ -391,6 +402,7 @@
       lastAutoScrollTimestamp = performance.now();
 
       window.scrollTo(0, progress * maxScroll);
+      updateHudAndProgress(progress, currentSec);
 
       if (soundtrack) {
         soundtrack.currentTime = currentSec;
@@ -463,11 +475,12 @@
   function setupScrollToTop() {
     if (scrollToTopBtn) {
       scrollToTopBtn.addEventListener('click', () => {
-        window.scrollTo({ top: 0, behavior: 'smooth' });
+        window.scrollTo(0, 0);
         currentSec = 0;
         lastAutoScrollTimestamp = performance.now();
         if (soundtrack) soundtrack.currentTime = 0;
         if (backgroundVideo) backgroundVideo.currentTime = 0;
+        updateHudAndProgress(0, 0);
       });
     }
   }

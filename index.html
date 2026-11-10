@@ -10,9 +10,12 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=8.0.0">
+  <link rel="stylesheet" href="styles.css?v=9.0.0">
   <style>
-    /* Absolute Overrides: Ensure Pristine HD Canvas, No Scanlines, and 600vh Tracks */
+    /* Absolute Overrides: Ensure Pristine HD Canvas, Smooth 60 FPS Auto-Scroll, and 600vh Tracks */
+    html {
+      scroll-behavior: auto !important;
+    }
     .canvas-scanline, .canvas-vignette {
       display: none !important;
       opacity: 0 !important;
@@ -65,10 +68,10 @@
   </div>
 
   <!-- Global Audio Element (Full Song 04:36 / 275.74s) -->
-  <audio id="soundtrack" src="audio/mode_pesawat.mp3?v=8.0.0" preload="auto" playsinline></audio>
+  <audio id="soundtrack" src="audio/mode_pesawat.mp3?v=9.0.0" preload="auto" playsinline></audio>
 
   <!-- Background Video Element (Native 60 FPS Hardware-Accelerated 16,541 Frames) -->
-  <video id="background-video" src="video/mode_pesawat_60fps.mp4?v=8.0.0" playsinline webkit-playsinline muted preload="auto" style="display:none;"></video>
+  <video id="background-video" src="video/mode_pesawat_60fps.mp4?v=9.0.0" playsinline webkit-playsinline muted preload="auto" style="display:none;"></video>
 
   <!-- Sticky Header / Navbar -->
   <header class="navbar">
@@ -648,6 +651,6 @@
 
   </main>
 
-  <script src="app.js?v=8.0.0"></script>
+  <script src="app.js?v=9.0.0"></script>
 </body>
 </html>
