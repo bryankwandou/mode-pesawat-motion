@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>MODE PESAWAT &mdash; Dandy Barakati feat. Dante Nababan | Interactive Motion Experience</title>
+  <title>MODE PESAWAT &mdash; Dandy Barakati feat. Dante Nababan | Full Video Motion Experience</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;600;700&display=swap" rel="stylesheet">
@@ -14,35 +14,36 @@
   <div id="loader" class="loader-overlay">
     <div class="loader-content">
       <div class="loader-brand">MODE PESAWAT</div>
-      <div class="loader-subtitle">DANDY BARAKATI FT. DANTE NABABAN</div>
+      <div class="loader-subtitle">FULL MUSIC VIDEO CINEMATIC EXPERIENCE (04:36)</div>
       <div class="loader-bar-track">
         <div id="loader-progress-bar" class="loader-bar-fill"></div>
       </div>
       <div class="loader-status">
-        <span id="loader-text">Memuat urutan frame visual...</span>
+        <span id="loader-text">Sinkronisasi 360 frame video sinematik...</span>
         <span id="loader-percentage">0%</span>
       </div>
     </div>
   </div>
 
-  <!-- Global Audio Element -->
+  <!-- Global Audio Element (Full Song 04:36) -->
   <audio id="soundtrack" src="audio/mode_pesawat.mp3" preload="auto" loop></audio>
 
   <!-- Sticky Header / Navbar -->
   <header class="navbar">
     <div class="nav-left">
-      <a href="#hero" class="brand-logo">
-        <span class="brand-code">MP-01</span>
+      <a href="#section-intro" class="brand-logo">
+        <span class="brand-code">MP-FULL</span>
         <span class="brand-title">MODE PESAWAT</span>
       </a>
     </div>
 
     <nav class="nav-center">
-      <a href="#section-hero" class="nav-link active" data-target="section-hero">Intro</a>
-      <a href="#section-concept" class="nav-link" data-target="section-concept">Konsep</a>
-      <a href="#section-artists" class="nav-link" data-target="section-artists">Artis</a>
-      <a href="#section-pipeline" class="nav-link" data-target="section-pipeline">Alur Produksi</a>
-      <a href="#section-release" class="nav-link" data-target="section-release">Dengar</a>
+      <a href="#section-intro" class="nav-link active" data-target="section-intro">00:00 Intro</a>
+      <a href="#section-verse1" class="nav-link" data-target="section-verse1">00:35 Bait 1</a>
+      <a href="#section-chorus" class="nav-link" data-target="section-chorus">01:25 Refrain</a>
+      <a href="#section-verse2" class="nav-link" data-target="section-verse2">02:15 Bait 2</a>
+      <a href="#section-bridge" class="nav-link" data-target="section-bridge">03:05 Bridge</a>
+      <a href="#section-outro" class="nav-link" data-target="section-outro">03:45 Outro</a>
     </nav>
 
     <div class="nav-right">
@@ -74,15 +75,15 @@
   <div class="frame-hud">
     <div class="hud-item">
       <span class="hud-label">FRAME</span>
-      <span class="hud-value" id="hud-frame-count">001 / 168</span>
+      <span class="hud-value" id="hud-frame-count">001 / 360</span>
     </div>
     <div class="hud-item">
-      <span class="hud-label">SCROLL</span>
+      <span class="hud-label">DURASI VIDEO</span>
+      <span class="hud-value hud-accent" id="hud-video-time">00:00 / 04:36</span>
+    </div>
+    <div class="hud-item">
+      <span class="hud-label">PROGRESS</span>
       <span class="hud-value" id="hud-scroll-pct">0%</span>
-    </div>
-    <div class="hud-item">
-      <span class="hud-label">RENDER</span>
-      <span class="hud-value hud-accent">60 FPS SYNC</span>
     </div>
   </div>
 
@@ -96,137 +97,156 @@
   <!-- Scroll Tracks Container (Drives the frame animation) -->
   <main class="scroll-track" id="scroll-container">
 
-    <!-- Section 1: Hero Introduction -->
-    <section class="story-section" id="section-hero">
+    <!-- Section 1: Intro (00:00 - 00:35) -->
+    <section class="story-section" id="section-intro">
       <div class="section-inner">
         <div class="hero-badge">
           <span class="badge-dot"></span>
-          OFFICIAL MUSIC VIDEO MOTION EXPERIENCE
+          OFFICIAL FULL MUSIC VIDEO &bull; COMPLETE TIMELINE (00:00 &mdash; 04:36)
         </div>
         <h1 class="hero-title">MODE<br><span class="gradient-text">PESAWAT</span></h1>
         <p class="hero-subtitle">
           DANDY BARAKATI <span class="text-dim">FEATURING</span> DANTE NABABAN
         </p>
         <p class="hero-description">
-          Sebuah eksplorasi visual interaktif yang diadaptasi dari karya video musik resmi.
-          Jelajahi alur cerita dan estetika sinematik dengan menggulir layar.
+          Adaptasi lengkap dari keseluruhan video musik resmi berdurasi 4 menit 36 detik.
+          Gulir layar ke bawah untuk menelusuri seluruh adegan, bait lirik, dan alur visual.
         </p>
         <div class="scroll-cue">
           <div class="scroll-mouse">
             <div class="scroll-wheel"></div>
           </div>
-          <span class="scroll-cue-text">Gulir ke bawah untuk memulai perjalanan</span>
+          <span class="scroll-cue-text">Gulir untuk menelusuri keseluruhan video</span>
         </div>
       </div>
     </section>
 
-    <!-- Section 2: Narrative & Philosophy -->
-    <section class="story-section" id="section-concept">
+    <!-- Section 2: Verse 1 (00:35 - 01:25) -->
+    <section class="story-section" id="section-verse1">
       <div class="section-inner align-left">
         <div class="content-card glass-panel">
-          <div class="card-tag">FILOSOFI KARYA</div>
-          <h2 class="card-title">Matikan Gangguan,<br>Nyalakan Fokus</h2>
+          <div class="card-tag">BABAK 01 &bull; 00:35 &mdash; 01:25</div>
+          <h2 class="card-title">Bait Pertama:<br>Menatap Layar & Tekanan</h2>
           <p class="card-body">
-            "Mode Pesawat" bukan sekadar fitur perangkat genggam, melainkan metafora
-            tentang keputusan sadar untuk memutuskan sambungan dari hiruk-pikuk ekspektasi luar
-            demi menemukan ketenangan batin, ritme orisinal, dan kejernihan visi artistik.
+            Kamera menangkap gestur reflektif di mana notifikasi terus mengalir tanpa henti.
+            Dandy Barakati menyuarakan dilema generasi modern yang terikat pada layar dan
+            ekspektasi sosial yang tak pernah padam.
           </p>
           <div class="metric-grid">
             <div class="metric-box">
-              <span class="metric-number">01</span>
-              <span class="metric-desc">Detoks Notifikasi</span>
+              <span class="metric-number">00:35</span>
+              <span class="metric-desc">Titik Awal Bait</span>
+            </div>
+            <div class="metric-box">
+              <span class="metric-number">Vokal</span>
+              <span class="metric-desc">Dandy Barakati</span>
+            </div>
+            <div class="metric-box">
+              <span class="metric-number">110</span>
+              <span class="metric-desc">Tempo BPM</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 3: Chorus (01:25 - 02:15) -->
+    <section class="story-section" id="section-chorus">
+      <div class="section-inner align-right">
+        <div class="content-card glass-panel">
+          <div class="card-tag">BABAK 02 &bull; 01:25 &mdash; 02:15</div>
+          <h2 class="card-title">Refrain Utama:<br>Aktifkan Mode Pesawat</h2>
+          <p class="card-body">
+            Puncak melodi di mana instrumen meledak dengan bass ritmis yang tegas.
+            Sebuah deklarasi untuk memutus sambungan sinyal luar demi menyelamatkan
+            kewarasan, ketenangan jiwa, dan fokus batiniah.
+          </p>
+          <div class="metric-grid">
+            <div class="metric-box">
+              <span class="metric-number">01:25</span>
+              <span class="metric-desc">Klimaks Refrain</span>
+            </div>
+            <div class="metric-box">
+              <span class="metric-number">F Minor</span>
+              <span class="metric-desc">Kunci Nada</span>
             </div>
             <div class="metric-box">
               <span class="metric-number">100%</span>
-              <span class="metric-desc">Hadir di Momen</span>
+              <span class="metric-desc">Koneksi Diri</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 4: Verse 2 (02:15 - 03:05) -->
+    <section class="story-section" id="section-verse2">
+      <div class="section-inner align-left">
+        <div class="content-card glass-panel">
+          <div class="card-tag">BABAK 03 &bull; 02:15 &mdash; 03:05</div>
+          <h2 class="card-title">Bait Kedua:<br>Ketukan Rap Dante Nababan</h2>
+          <p class="card-body">
+            Adegan berpindah menampilkan intensitas Dante Nababan.
+            Rima vokal yang padat dan ketukan drum tajam menghadirkan perspektif
+            tentang realitas keras kehidupan kota serta komitmen mempertahankan prinsip.
+          </p>
+          <div class="metric-grid">
+            <div class="metric-box">
+              <span class="metric-number">02:15</span>
+              <span class="metric-desc">Bagian Rima Rap</span>
             </div>
             <div class="metric-box">
-              <span class="metric-number">24/7</span>
-              <span class="metric-desc">Ruang Kreativitas</span>
+              <span class="metric-number">Artis</span>
+              <span class="metric-desc">Dante Nababan</span>
+            </div>
+            <div class="metric-box">
+              <span class="metric-number">Dinamis</span>
+              <span class="metric-desc">Karakter Aransemen</span>
             </div>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- Section 3: The Artists -->
-    <section class="story-section" id="section-artists">
+    <!-- Section 5: Bridge (03:05 - 03:45) -->
+    <section class="story-section" id="section-bridge">
       <div class="section-inner align-right">
         <div class="content-card glass-panel">
-          <div class="card-tag">KOLABORASI MUSIK</div>
-          <h2 class="card-title">Dua Spektrum,<br>Satu Frekuensi</h2>
-          <div class="artist-duo">
-            <div class="artist-profile">
-              <div class="artist-header">
-                <span class="artist-role">VOKAL & KOMPOSISI</span>
-                <span class="artist-name">Dandy Barakati</span>
-              </div>
-              <p class="artist-detail">
-                Membawakan melodi reflektif dengan karakter vokal yang hangat,
-                menganyam lirik intim mengenai perjalanan diri di tengah riuhnya perkotaan.
-              </p>
-            </div>
-            <div class="artist-divider"></div>
-            <div class="artist-profile">
-              <div class="artist-header">
-                <span class="artist-role">KOLABORATOR RAP</span>
-                <span class="artist-name">Dante Nababan</span>
-              </div>
-              <p class="artist-detail">
-                Memberikan ketukan rima berkarakter tegas, ritme dinamis, dan kedalaman
-                perspektif melalui baris lirik yang lugas dan bertenaga.
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Section 4: Production Pipeline -->
-    <section class="story-section" id="section-pipeline">
-      <div class="section-inner align-center">
-        <div class="content-card glass-panel wide-card">
-          <div class="card-tag">ARSITEKTUR TEKNOLOGI</div>
-          <h2 class="card-title">Alur Pembuatan Visual Motion</h2>
-          <p class="card-lead">
-            Implementasi teknik modern scrollytelling yang membedah berkas video menjadi
-            urutan gambar WebP terkompresi dengan fidelitas tinggi untuk rendering web instan.
+          <div class="card-tag">BABAK 04 &bull; 03:05 &mdash; 03:45</div>
+          <h2 class="card-title">Bridge Sinematik:<br>Klimaks Audio Visual</h2>
+          <p class="card-body">
+            Transisi pencahayaan sinematik dan komposisi warna kontras saat kedua artis
+            bertemu dalam harmoni penutup. Ritme melambat sejenak sebelum hentakan refrain terakhir.
           </p>
-          <div class="pipeline-stepper">
-            <div class="step-card">
-              <div class="step-index">01</div>
-              <div class="step-title">Generasi Sumber</div>
-              <p class="step-desc">Karakter visual dan footage sinematik diproses dengan arahan terarah.</p>
+          <div class="metric-grid">
+            <div class="metric-box">
+              <span class="metric-number">03:05</span>
+              <span class="metric-desc">Momen Transisi</span>
             </div>
-            <div class="step-card">
-              <div class="step-index">02</div>
-              <div class="step-title">Dekomposisi Video</div>
-              <p class="step-desc">Video diekstraksi menggunakan FFmpeg ke dalam ratusan bingkai gambar WebP optimal.</p>
+            <div class="metric-box">
+              <span class="metric-number">Duet</span>
+              <span class="metric-desc">Harmoni Penuh</span>
             </div>
-            <div class="step-card">
-              <div class="step-index">03</div>
-              <div class="step-title">Interpolasi Kanvas</div>
-              <p class="step-desc">Scrubbing kanvas 2D berbasis akselerasi GPU dengan teknik linear interpolation (lerp).</p>
-            </div>
-            <div class="step-card">
-              <div class="step-index">04</div>
-              <div class="step-title">Sinkronisasi Audio</div>
-              <p class="step-desc">Pengalaman terintegrasi antara gerak visual dan aransemen instrumen audio.</p>
+            <div class="metric-box">
+              <span class="metric-number">Resolusi</span>
+              <span class="metric-desc">Pencapaian Fokus</span>
             </div>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- Section 5: Streaming & Call to Action -->
-    <section class="story-section" id="section-release">
+    <!-- Section 6: Outro & Official Release (03:45 - 04:36) -->
+    <section class="story-section" id="section-outro">
       <div class="section-inner align-center">
         <div class="content-card glass-panel cta-card">
-          <div class="card-tag">DISTRIBUSI DIGITAL</div>
-          <h2 class="card-title">Dengarkan "Mode Pesawat" Sekarang</h2>
+          <div class="card-tag">BABAK 05 &bull; 03:45 &mdash; 04:36 &bull; PENUTUP LENGKAP</div>
+          <h2 class="card-title">Akhir Perjalanan & Putar Musik Penuh</h2>
           <p class="card-body">
-            Karya resmi Dandy Barakati bersama Dante Nababan dapat diakses di seluruh platform pemutar musik digital.
+            Anda telah menuntaskan seluruh 4 menit 36 detik video musik "Mode Pesawat".
+            Dengarkan trek audio penuh berkualitas tinggi atau tonton di platform musik digital resmi.
           </p>
+
           <div class="platform-actions">
             <a href="https://www.youtube.com" target="_blank" rel="noopener noreferrer" class="platform-btn youtube-btn">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
@@ -250,15 +270,16 @@
 
           <div class="footer-meta">
             <p class="credits-text">
-              Lagu: <strong>Mode Pesawat</strong> | Vokal: <strong>Dandy Barakati ft. Dante Nababan</strong><br>
-              Pengembangan Sistem Interaktif Motion Web &bull; Antigravity Engine
+              Judul: <strong>Mode Pesawat</strong> &bull; Artis: <strong>Dandy Barakati ft. Dante Nababan</strong><br>
+              Durasi Penuh: <strong>04:36</strong> &bull; Cakupan Visual: <strong>360 Frame Lengkap (00:00 &mdash; 04:36)</strong><br>
+              Teknologi: <strong>HTML5 Canvas Scrollytelling Engine</strong>
             </p>
             <button id="scroll-to-top-btn" class="nav-button action-btn">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <line x1="12" y1="19" x2="12" y2="5"></line>
                 <polyline points="5 12 12 5 19 12"></polyline>
               </svg>
-              <span>Kembali ke Atas</span>
+              <span>Ulangi Dari Awal</span>
             </button>
           </div>
         </div>
@@ -270,4 +291,3 @@
   <script src="app.js"></script>
 </body>
 </html>
-

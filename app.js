@@ -1,5 +1,6 @@
 (() => {
-  const TOTAL_FRAMES = 168;
+  const TOTAL_FRAMES = 360;
+  const TOTAL_DURATION_SECONDS = 275.74;
   const FRAME_DIRECTORY = 'frames';
   const FRAME_PREFIX = 'frame_';
   const FRAME_EXTENSION = '.webp';
@@ -12,6 +13,7 @@
   const scrollProgressIndicator = document.getElementById('scroll-progress-indicator');
   const hudFrameCount = document.getElementById('hud-frame-count');
   const hudScrollPct = document.getElementById('hud-scroll-pct');
+  const hudVideoTime = document.getElementById('hud-video-time');
   const audioToggleBtn = document.getElementById('audio-toggle-btn');
   const audioLabel = document.getElementById('audio-label');
   const soundtrack = document.getElementById('soundtrack');
@@ -33,6 +35,13 @@
       s = '0' + s;
     }
     return s;
+  }
+
+  function formatTime(seconds) {
+    const totalSec = Math.max(0, Math.floor(seconds));
+    const mins = Math.floor(totalSec / 60);
+    const secs = totalSec % 60;
+    return `${padNumber(mins, 2)}:${padNumber(secs, 2)}`;
   }
 
   function getFrameSource(index) {
@@ -65,8 +74,8 @@
 
     context.clearRect(0, 0, canvasWidth, canvasHeight);
 
-    const imageWidth = image.naturalWidth || 1280;
-    const imageHeight = image.naturalHeight || 720;
+    const imageWidth = image.naturalWidth || 960;
+    const imageHeight = image.naturalHeight || 540;
 
     const scale = Math.max(canvasWidth / imageWidth, canvasHeight / imageHeight);
     const drawWidth = imageWidth * scale;
@@ -88,6 +97,11 @@
     scrollProgressIndicator.style.width = `${percentageInt}%`;
     hudScrollPct.textContent = `${percentageInt}%`;
 
+    const currentTimeSec = progress * TOTAL_DURATION_SECONDS;
+    if (hudVideoTime) {
+      hudVideoTime.textContent = `${formatTime(currentTimeSec)} / 04:36`;
+    }
+
     updateActiveNavigation(scrollY);
   }
 
@@ -96,7 +110,7 @@
     let currentActiveId = '';
 
     sections.forEach((section) => {
-      const top = section.offsetTop - 200;
+      const top = section.offsetTop - 240;
       const height = section.offsetHeight;
       if (scrollY >= top && scrollY < top + height) {
         currentActiveId = section.getAttribute('id');
@@ -143,10 +157,10 @@
           renderFrame(0);
         }
 
-        if (loadedCount >= TOTAL_FRAMES) {
+        if (loadedCount >= TOTAL_FRAMES || (loadedCount >= 30 && i === 29)) {
           setTimeout(() => {
             loader.classList.add('hidden');
-          }, 300);
+          }, 400);
         }
       };
 
@@ -197,9 +211,9 @@
         autoPlayTimerId = setInterval(() => {
           const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
           const currentScroll = window.scrollY || window.pageYOffset;
-          const step = 6;
+          const step = 5;
 
-          if (currentScroll >= maxScroll - 5) {
+          if (currentScroll >= maxScroll - 6) {
             window.scrollTo({ top: 0, behavior: 'smooth' });
           } else {
             window.scrollBy({ top: step, behavior: 'auto' });
@@ -245,4 +259,3 @@
     init();
   }
 })();
-
