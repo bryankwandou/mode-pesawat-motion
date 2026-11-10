@@ -58,7 +58,7 @@
 
   function getFrameSource(index) {
     const formatted = padNumber(index + 1, 4);
-    return `${FRAME_DIRECTORY}/${FRAME_PREFIX}${formatted}${FRAME_EXTENSION}?v=5.0.0`;
+    return `${FRAME_DIRECTORY}/${FRAME_PREFIX}${formatted}${FRAME_EXTENSION}?v=6.0.0`;
   }
 
   function setCanvasDimensions() {
