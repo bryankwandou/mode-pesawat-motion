@@ -2,6 +2,11 @@
 
 Website landing page interaktif berbasis animasi kanvas beresolusi tinggi yang diadaptasi dari video musik resmi "Mode Pesawat" oleh Dandy Barakati feat. Dante Nababan.
 
+## Live Demo (GitHub Pages)
+
+Akses website secara langsung di:
+https://bryankwandou.github.io/mode-pesawat-motion/
+
 ## Fitur Utama
 
 - **Scroll-Driven Canvas Sequence**: Animasi kanvas 60 FPS yang merespons pergerakan scroll pengguna secara mulus menggunakan algoritma linear interpolation.
@@ -15,14 +20,13 @@ Website landing page interaktif berbasis animasi kanvas beresolusi tinggi yang d
 
 ```
 mode-pesawat-motion/
-├── public/
-│   ├── audio/
-│   │   └── mode_pesawat.mp3
-│   ├── frames/
-│   │   └── frame_0001.webp ... frame_0168.webp
-│   ├── app.js
-│   ├── index.html
-│   └── styles.css
+├── audio/
+│   └── mode_pesawat.mp3
+├── frames/
+│   └── frame_0001.webp ... frame_0168.webp
+├── app.js
+├── index.html
+├── styles.css
 ├── extract_frames.js
 ├── package.json
 ├── README.md
@@ -38,4 +42,4 @@ node server.js
 ```
 
 Buka peramban web pada alamat:
-`http://localhost:3000`
+`http://localhost:3001` (atau port yang tertera pada konsol).

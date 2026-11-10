@@ -37,3 +37,4 @@ execSync(`ffmpeg -ss 00:00:02 -t 14 -i "${videoPath}" -vf "fps=12,scale=1280:720
 
 const files = fs.readdirSync(framesDir).filter(f => f.endsWith('.webp'));
 console.log(`Successfully generated ${files.length} WebP frames in ${framesDir}`);
+

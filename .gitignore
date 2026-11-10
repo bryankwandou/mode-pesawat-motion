@@ -1,7 +1,4 @@
 node_modules/
-public/frames/*.webp
-!public/frames/.gitkeep
-public/audio/*.mp3
-!public/audio/.gitkeep
 .DS_Store
 *.log
+reorganize.js
