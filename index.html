@@ -10,7 +10,43 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=7.0.0">
+  <link rel="stylesheet" href="styles.css?v=8.0.0">
+  <style>
+    /* Absolute Overrides: Ensure Pristine HD Canvas, No Scanlines, and 600vh Tracks */
+    .canvas-scanline, .canvas-vignette {
+      display: none !important;
+      opacity: 0 !important;
+      visibility: hidden !important;
+    }
+    .story-section {
+      min-height: 600vh !important;
+    }
+    #motion-canvas {
+      image-rendering: auto !important;
+      filter: none !important;
+    }
+    .hero-cta-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      margin-top: 24px;
+      padding: 14px 28px;
+      border-radius: 999px;
+      background: var(--color-primary, #00f0ff);
+      color: #07090e;
+      font-weight: 700;
+      font-size: 1rem;
+      text-decoration: none;
+      cursor: pointer;
+      border: none;
+      box-shadow: 0 0 24px rgba(0, 240, 255, 0.4);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .hero-cta-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 0 32px rgba(0, 240, 255, 0.6);
+    }
+  </style>
 </head>
 <body>
   <!-- Loading Screen -->
@@ -29,10 +65,10 @@
   </div>
 
   <!-- Global Audio Element (Full Song 04:36 / 275.74s) -->
-  <audio id="soundtrack" src="audio/mode_pesawat.mp3?v=7.0.0" preload="auto" playsinline></audio>
+  <audio id="soundtrack" src="audio/mode_pesawat.mp3?v=8.0.0" preload="auto" playsinline></audio>
 
   <!-- Background Video Element (Native 60 FPS Hardware-Accelerated 16,541 Frames) -->
-  <video id="background-video" src="video/mode_pesawat_60fps.mp4?v=7.0.0" playsinline webkit-playsinline muted preload="auto" style="display:none;"></video>
+  <video id="background-video" src="video/mode_pesawat_60fps.mp4?v=8.0.0" playsinline webkit-playsinline muted preload="auto" style="display:none;"></video>
 
   <!-- Sticky Header / Navbar -->
   <header class="navbar">
@@ -71,7 +107,7 @@
         <svg class="btn-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <polygon points="5 3 19 12 5 21 5 21"></polygon>
         </svg>
-        <span id="autoplay-text">Auto Motion 60 FPS</span>
+        <span id="autoplay-text">Auto Scroll 60 FPS</span>
       </button>
     </div>
   </header>
@@ -121,7 +157,7 @@
     <canvas id="motion-canvas"></canvas>
   </div>
 
-  <!-- Extended Scroll Tracks Container (Proportional to 04:36 full music duration - 16 Chapters / 6800vh) -->
+  <!-- Extended Scroll Tracks Container (Proportional to 04:36 full music duration - 16 Chapters / 9600vh) -->
   <main class="scroll-track" id="scroll-container">
 
     <!-- Section 01: Prologue (00:00 - 00:18) -->
@@ -139,6 +175,12 @@
           Adaptasi scrollytelling komprehensif dari keseluruhan video musik resmi (durasi 4 menit 36 detik).
           Sistem animasi kanvas berjalan pada 60 FPS murni (16.541 frame) yang tersinkronisasi penuh dengan trek musik dari awal hingga habis.
         </p>
+        <button id="hero-start-btn" class="hero-cta-btn">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+            <polygon points="5 3 19 12 5 21 5 21"></polygon>
+          </svg>
+          <span>Mulai Auto Scroll & Putar Musik (04:36)</span>
+        </button>
         <div class="scroll-cue">
           <div class="scroll-mouse">
             <div class="scroll-wheel"></div>
@@ -606,6 +648,6 @@
 
   </main>
 
-  <script src="app.js?v=7.0.0"></script>
+  <script src="app.js?v=8.0.0"></script>
 </body>
 </html>

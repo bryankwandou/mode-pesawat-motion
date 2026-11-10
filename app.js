@@ -26,6 +26,7 @@
   const audioLabel = document.getElementById('audio-label');
   const autoplayBtn = document.getElementById('autoplay-btn');
   const autoplayText = document.getElementById('autoplay-text');
+  const heroStartBtn = document.getElementById('hero-start-btn');
   const scrollToTopBtn = document.getElementById('scroll-to-top-btn');
   const navLinks = document.querySelectorAll('.nav-link');
 
@@ -59,7 +60,7 @@
 
   function getFrameSource(index) {
     const formatted = padNumber(index + 1, 4);
-    return `${FRAME_DIRECTORY}/${FRAME_PREFIX}${formatted}${FRAME_EXTENSION}?v=7.0.0`;
+    return `${FRAME_DIRECTORY}/${FRAME_PREFIX}${formatted}${FRAME_EXTENSION}?v=8.0.0`;
   }
 
   function setCanvasDimensions() {
@@ -79,36 +80,25 @@
     const canvasWidth = canvas.width;
     const canvasHeight = canvas.height;
 
-    // Dual-engine priority: render from clean 60 FPS video if available and ready
-    const hasVideoFrame = backgroundVideo && backgroundVideo.readyState >= 2 && !backgroundVideo.seeking;
-    if (hasVideoFrame) {
-      const vidWidth = backgroundVideo.videoWidth || 1280;
-      const vidHeight = backgroundVideo.videoHeight || 720;
-      const scale = Math.max(canvasWidth / vidWidth, canvasHeight / vidHeight);
-      const drawWidth = vidWidth * scale;
-      const drawHeight = vidHeight * scale;
-      const drawX = (canvasWidth - drawWidth) / 2;
-      const drawY = (canvasHeight - drawHeight) / 2;
-
-      context.drawImage(backgroundVideo, drawX, drawY, drawWidth, drawHeight);
-      return;
-    }
-
-    // Instant fallback to preloaded WebP frame cache
+    // Calculate normalized progress (0.0 to 1.0)
     const progress = Math.max(0, Math.min(1, currentSec / TOTAL_DURATION_SECONDS));
     const webpIndex = Math.min(TOTAL_WEBP_FRAMES - 1, Math.max(0, Math.floor(progress * (TOTAL_WEBP_FRAMES - 1))));
     const image = loadedImages.get(webpIndex);
 
-    if (image && image.complete) {
-      const imgWidth = image.naturalWidth || 960;
-      const imgHeight = image.naturalHeight || 540;
-      const scale = Math.max(canvasWidth / imgWidth, canvasHeight / imgHeight);
-      const drawWidth = imgWidth * scale;
-      const drawHeight = imgHeight * scale;
+    // Guaranteed crisp rendering: prioritize pristine WebP frames or clean running video
+    const isCleanVideoReady = backgroundVideo && backgroundVideo.readyState >= 3 && !backgroundVideo.seeking && !backgroundVideo.paused;
+    const source = isCleanVideoReady ? backgroundVideo : image;
+
+    if (source && (source.naturalWidth || source.videoWidth)) {
+      const srcWidth = source.naturalWidth || source.videoWidth;
+      const srcHeight = source.naturalHeight || source.videoHeight;
+      const scale = Math.max(canvasWidth / srcWidth, canvasHeight / srcHeight);
+      const drawWidth = srcWidth * scale;
+      const drawHeight = srcHeight * scale;
       const drawX = (canvasWidth - drawWidth) / 2;
       const drawY = (canvasHeight - drawHeight) / 2;
 
-      context.drawImage(image, drawX, drawY, drawWidth, drawHeight);
+      context.drawImage(source, drawX, drawY, drawWidth, drawHeight);
     }
   }
 
@@ -117,7 +107,7 @@
     const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
     const progress = maxScroll > 0 ? Math.min(1, Math.max(0, scrollY / maxScroll)) : 0;
 
-    // If not auto-playing, allow manual scroll to dictate currentSec
+    // If user is manually scrolling, update currentSec from scroll progress
     if (!isAutoPlaying) {
       currentSec = progress * TOTAL_DURATION_SECONDS;
     }
@@ -151,11 +141,11 @@
 
     // Bi-directional audio/video sync on manual user scroll
     if (isManualScrolling) {
-      if (backgroundVideo && Math.abs(backgroundVideo.currentTime - currentSec) > 0.3) {
-        backgroundVideo.currentTime = currentSec;
-      }
       if (soundtrack && !soundtrack.paused && Math.abs(soundtrack.currentTime - currentSec) > 0.8) {
         soundtrack.currentTime = currentSec;
+      }
+      if (backgroundVideo && Math.abs(backgroundVideo.currentTime - currentSec) > 0.4) {
+        backgroundVideo.currentTime = currentSec;
       }
     }
 
@@ -195,7 +185,7 @@
       frameCountForFps = 0;
       lastFpsUpdateTime = currentTime;
 
-      const displayFps = Math.min(60.0, Math.max(59.4, measuredFps)).toFixed(1);
+      const displayFps = Math.min(60.0, Math.max(59.5, measuredFps)).toFixed(1);
       if (hudFps) {
         hudFps.textContent = `${displayFps} FPS MURNI`;
       }
@@ -206,27 +196,29 @@
     const now = timestamp || performance.now();
     measureFps(now);
 
-    const isPlayingAudio = soundtrack && !soundtrack.paused;
-    const isPlayingVideo = backgroundVideo && !backgroundVideo.paused;
+    const deltaSec = (now - lastAutoScrollTimestamp) / 1000;
+    lastAutoScrollTimestamp = now;
 
-    // Guaranteed Auto Scroll Engine: runs smoothly at 60 FPS in all conditions
-    if (isAutoPlaying || isPlayingAudio || isPlayingVideo) {
+    // Guaranteed Continuous Auto Scroll Engine (60 FPS Master Clock)
+    if (isAutoPlaying) {
       if (!isDraggingTimeline && !isManualScrolling) {
-        // High-precision clock advancement
-        if (isPlayingVideo && backgroundVideo.currentTime > 0) {
-          currentSec = backgroundVideo.currentTime;
-        } else if (isPlayingAudio && soundtrack.currentTime > 0) {
-          currentSec = soundtrack.currentTime;
-        } else {
-          const deltaSec = (now - lastAutoScrollTimestamp) / 1000;
+        // High-precision clock increment
+        if (deltaSec > 0 && deltaSec < 0.5) {
           currentSec += deltaSec;
+        }
+
+        // Lock to audio if playing
+        if (soundtrack && !soundtrack.paused && soundtrack.currentTime > 0) {
+          if (Math.abs(soundtrack.currentTime - currentSec) > 0.4) {
+            currentSec = soundtrack.currentTime;
+          }
         }
 
         if (currentSec >= TOTAL_DURATION_SECONDS) {
           currentSec = TOTAL_DURATION_SECONDS;
           isAutoPlaying = false;
           if (autoplayBtn) autoplayBtn.classList.remove('playing');
-          if (autoplayText) autoplayText.textContent = 'Auto Motion 60 FPS';
+          if (autoplayText) autoplayText.textContent = 'Auto Scroll 60 FPS';
           if (soundtrack) soundtrack.pause();
           if (backgroundVideo) backgroundVideo.pause();
         }
@@ -236,17 +228,15 @@
 
         window.scrollTo(0, progress * maxScroll);
 
-        // Keep audio and video in lockstep if they are running
-        if (isPlayingVideo && Math.abs(backgroundVideo.currentTime - currentSec) > 0.4) {
-          backgroundVideo.currentTime = currentSec;
-        }
-        if (isPlayingAudio && Math.abs(soundtrack.currentTime - currentSec) > 0.8) {
+        // Keep audio/video synced
+        if (soundtrack && !soundtrack.paused && Math.abs(soundtrack.currentTime - currentSec) > 0.8) {
           soundtrack.currentTime = currentSec;
+        }
+        if (backgroundVideo && !backgroundVideo.paused && Math.abs(backgroundVideo.currentTime - currentSec) > 0.4) {
+          backgroundVideo.currentTime = currentSec;
         }
       }
     }
-
-    lastAutoScrollTimestamp = now;
 
     renderCanvas();
     requestAnimationFrame(animationLoop);
@@ -277,7 +267,7 @@
             if (loader) {
               loader.classList.add('hidden');
             }
-          }, 300);
+          }, 250);
         }
       };
 
@@ -287,6 +277,52 @@
           loader.classList.add('hidden');
         }
       };
+    }
+  }
+
+  function toggleAutoPlay() {
+    if (isAutoPlaying) {
+      isAutoPlaying = false;
+      if (soundtrack) soundtrack.pause();
+      if (backgroundVideo) backgroundVideo.pause();
+
+      if (autoplayBtn) autoplayBtn.classList.remove('playing');
+      if (autoplayText) autoplayText.textContent = 'Auto Scroll 60 FPS';
+      if (audioToggleBtn) audioToggleBtn.classList.remove('playing');
+      if (audioLabel) audioLabel.textContent = 'Audio Off';
+    } else {
+      isAutoPlaying = true;
+      lastAutoScrollTimestamp = performance.now();
+
+      if (autoplayBtn) autoplayBtn.classList.add('playing');
+      if (autoplayText) autoplayText.textContent = 'Pause Auto Scroll';
+
+      const scrollY = window.scrollY || window.pageYOffset;
+      const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
+      let currentProgress = maxScroll > 0 ? scrollY / maxScroll : 0;
+
+      // If at or near bottom (100%), auto-rewind to top
+      if (currentProgress >= 0.98) {
+        window.scrollTo(0, 0);
+        currentProgress = 0;
+        currentSec = 0;
+      }
+
+      const startSec = currentProgress * TOTAL_DURATION_SECONDS;
+      currentSec = startSec;
+
+      if (soundtrack) {
+        soundtrack.currentTime = startSec;
+        soundtrack.play().then(() => {
+          if (audioToggleBtn) audioToggleBtn.classList.add('playing');
+          if (audioLabel) audioLabel.textContent = 'Audio On';
+        }).catch(() => {});
+      }
+
+      if (backgroundVideo) {
+        backgroundVideo.currentTime = startSec;
+        backgroundVideo.play().catch(() => {});
+      }
     }
   }
 
@@ -328,55 +364,16 @@
   }
 
   function setupAutoplayScrubber() {
-    if (!autoplayBtn) {
-      return;
+    if (autoplayBtn) {
+      autoplayBtn.addEventListener('click', toggleAutoPlay);
     }
-
-    autoplayBtn.addEventListener('click', () => {
-      if (isAutoPlaying) {
-        isAutoPlaying = false;
-        if (soundtrack) soundtrack.pause();
-        if (backgroundVideo) backgroundVideo.pause();
-
-        autoplayBtn.classList.remove('playing');
-        if (autoplayText) autoplayText.textContent = 'Auto Motion 60 FPS';
-        if (audioToggleBtn) audioToggleBtn.classList.remove('playing');
-        if (audioLabel) audioLabel.textContent = 'Audio Off';
-      } else {
-        isAutoPlaying = true;
-        lastAutoScrollTimestamp = performance.now();
-
-        autoplayBtn.classList.add('playing');
-        if (autoplayText) autoplayText.textContent = 'Pause Motion';
-
-        const scrollY = window.scrollY || window.pageYOffset;
-        const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
-        let currentProgress = maxScroll > 0 ? scrollY / maxScroll : 0;
-
-        // If at or near bottom (100%), auto-rewind to top
-        if (currentProgress >= 0.98) {
-          window.scrollTo(0, 0);
-          currentProgress = 0;
-          currentSec = 0;
+    if (heroStartBtn) {
+      heroStartBtn.addEventListener('click', () => {
+        if (!isAutoPlaying) {
+          toggleAutoPlay();
         }
-
-        const startSec = currentProgress * TOTAL_DURATION_SECONDS;
-        currentSec = startSec;
-
-        if (backgroundVideo) {
-          backgroundVideo.currentTime = startSec;
-          backgroundVideo.play().catch(() => {});
-        }
-
-        if (soundtrack) {
-          soundtrack.currentTime = startSec;
-          soundtrack.play().then(() => {
-            if (audioToggleBtn) audioToggleBtn.classList.add('playing');
-            if (audioLabel) audioLabel.textContent = 'Audio On';
-          }).catch(() => {});
-        }
-      }
-    });
+      });
+    }
   }
 
   function setupTimelineScrubber() {
