@@ -49,3 +49,4 @@ for (const f of generated) {
 }
 console.log(`Total frames size: ${(totalBytes / (1024*1024)).toFixed(2)} MB`);
 console.log(`Average frame size: ${(totalBytes / generated.length / 1024).toFixed(1)} KB`);
+
